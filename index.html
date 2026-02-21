@@ -33,136 +33,60 @@
       overflow: hidden;
     }
 
-    /* Layout */
-    .app {
-      display: grid;
-      grid-template-rows: auto 1fr;
-      height: 100vh;
-    }
+    .app { display: grid; grid-template-rows: auto 1fr; height: 100vh; }
 
     header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 24px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--border);
     }
-
-    header h1 {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--accent);
-      letter-spacing: -0.3px;
-    }
-
+    header h1 { font-size: 16px; font-weight: 600; color: var(--accent); letter-spacing: -0.3px; }
     header h1 span { color: var(--text-muted); font-weight: 400; }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
 
     .file-path {
-      font-size: 12px;
-      color: var(--text-muted);
-      background: var(--surface2);
-      padding: 4px 10px;
-      border-radius: 4px;
-      max-width: 400px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      font-size: 12px; color: var(--text-muted); background: var(--surface2);
+      padding: 4px 10px; border-radius: 4px; max-width: 350px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
 
     .btn {
-      padding: 6px 14px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--surface2);
-      color: var(--text);
-      font-size: 12px;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.15s;
+      padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); font-size: 12px;
+      font-family: inherit; cursor: pointer; transition: all 0.15s;
     }
-
     .btn:hover { background: var(--border); }
     .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
     .btn-primary:hover { background: var(--accent-dim); }
+    .btn-save { background: var(--green); border-color: var(--green); color: #0f1117; font-weight: 600; }
+    .btn-save:hover { opacity: 0.85; }
+    .btn-save:disabled { opacity: 0.3; cursor: default; }
 
-    .stats {
-      display: flex;
-      gap: 16px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
+    .stats { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); }
     .stats strong { color: var(--text); }
 
-    /* Main content */
-    .content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      overflow: hidden;
-    }
-
-    .panel {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      border-right: 1px solid var(--border);
-    }
-
+    .content { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
+    .panel { display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid var(--border); }
     .panel:last-child { border-right: none; }
 
-    .panel-tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
-    }
-
+    .panel-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); }
     .panel-tab {
-      padding: 8px 16px;
-      font-size: 12px;
-      font-family: inherit;
-      color: var(--text-muted);
-      background: none;
-      border: none;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.15s;
+      padding: 8px 16px; font-size: 12px; font-family: inherit; color: var(--text-muted);
+      background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s;
     }
-
     .panel-tab:hover { color: var(--text); }
     .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-    .panel-body {
-      flex: 1;
-      overflow: auto;
-      padding: 0;
-    }
+    .panel-body { flex: 1; overflow: auto; padding: 0; }
 
     /* JSONL View */
-    .jsonl-view {
-      padding: 16px;
-      font-size: 13px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
+    .jsonl-view { padding: 16px; font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
     .jsonl-line {
-      padding: 4px 8px;
-      border-radius: 4px;
-      margin-bottom: 2px;
-      cursor: pointer;
-      transition: background 0.1s;
+      padding: 4px 8px; border-radius: 4px; margin-bottom: 2px;
+      cursor: pointer; transition: background 0.1s; border: 1px solid transparent;
     }
-
     .jsonl-line:hover { background: var(--surface2); }
-    .jsonl-line.selected { background: var(--surface2); outline: 1px solid var(--accent); }
+    .jsonl-line.selected { background: var(--surface2); border-color: var(--accent); }
 
     .json-key { color: var(--cyan); }
     .json-string { color: var(--green); }
@@ -170,177 +94,106 @@
     .json-bracket { color: var(--text-muted); }
     .json-relation { color: var(--pink); }
 
+    /* JSONL Edit Mode */
+    .jsonl-editor {
+      width: 100%; min-height: 60px; background: var(--bg); color: var(--green);
+      border: 1px solid var(--accent); border-radius: 4px; padding: 6px 8px;
+      font-family: inherit; font-size: 12px; line-height: 1.6; resize: vertical;
+    }
+    .jsonl-editor:focus { outline: none; border-color: var(--cyan); }
+    .jsonl-edit-actions { display: flex; gap: 6px; margin-top: 4px; }
+    .jsonl-edit-actions .btn { padding: 3px 10px; font-size: 11px; }
+    .jsonl-error { color: var(--red); font-size: 11px; margin-top: 2px; }
+
     /* Tree View */
-    .tree-view {
-      padding: 16px;
-      font-size: 13px;
-    }
-
-    .tree-node {
-      margin-bottom: 8px;
-    }
-
+    .tree-view { padding: 16px; font-size: 13px; }
+    .tree-node { margin-bottom: 8px; }
     .tree-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.1s;
+      display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+      border-radius: 6px; cursor: pointer; transition: background 0.1s; border: 1px solid transparent;
     }
-
     .tree-header:hover { background: var(--surface2); }
+    .tree-header.selected { background: var(--surface2); border-color: var(--accent); }
 
-    .tree-toggle {
-      width: 16px;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 10px;
-      flex-shrink: 0;
-      user-select: none;
-    }
-
-    .tree-icon {
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-
-    .tree-name {
-      font-weight: 600;
-      color: var(--text);
-    }
-
+    .tree-toggle { width: 16px; text-align: center; color: var(--text-muted); font-size: 10px; flex-shrink: 0; user-select: none; }
+    .tree-icon { font-size: 14px; flex-shrink: 0; }
+    .tree-name { font-weight: 600; color: var(--text); flex: 1; }
     .tree-type {
-      font-size: 11px;
-      color: var(--orange);
-      background: rgba(245, 158, 11, 0.12);
-      padding: 1px 6px;
-      border-radius: 3px;
+      font-size: 11px; color: var(--orange); background: rgba(245, 158, 11, 0.12);
+      padding: 1px 6px; border-radius: 3px;
     }
-
-    .tree-children {
-      margin-left: 24px;
-      border-left: 1px solid var(--border);
-      padding-left: 12px;
-      overflow: hidden;
-      transition: max-height 0.2s;
+    .tree-edit-btn {
+      font-size: 11px; color: var(--text-muted); background: none; border: none;
+      cursor: pointer; opacity: 0; transition: opacity 0.15s; padding: 2px 6px;
     }
+    .tree-header:hover .tree-edit-btn { opacity: 1; }
+    .tree-edit-btn:hover { color: var(--accent); }
 
+    .tree-children { margin-left: 24px; border-left: 1px solid var(--border); padding-left: 12px; overflow: hidden; }
     .tree-children.collapsed { max-height: 0; padding: 0; overflow: hidden; }
 
-    .tree-observation {
-      font-size: 12px;
-      color: var(--text-muted);
-      padding: 3px 0;
-      line-height: 1.5;
+    .tree-section-label {
+      font-size: 10px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1px; padding: 8px 0 4px;
     }
 
-    .tree-observation::before {
-      content: "•";
-      color: var(--border);
-      margin-right: 8px;
+    .tree-observation { font-size: 12px; color: var(--text-muted); padding: 3px 0; line-height: 1.5; display: flex; align-items: flex-start; gap: 4px; }
+    .tree-observation .bullet { color: var(--border); flex-shrink: 0; }
+    .tree-observation .obs-text { flex: 1; }
+    .tree-obs-edit, .tree-obs-delete {
+      font-size: 10px; color: var(--text-muted); background: none; border: none;
+      cursor: pointer; opacity: 0; transition: opacity 0.1s; padding: 0 3px;
     }
+    .tree-observation:hover .tree-obs-edit,
+    .tree-observation:hover .tree-obs-delete { opacity: 1; }
+    .tree-obs-edit:hover { color: var(--accent); }
+    .tree-obs-delete:hover { color: var(--red); }
 
-    .tree-relation {
-      font-size: 12px;
-      padding: 3px 0;
-    }
-
+    .tree-relation { font-size: 12px; padding: 3px 0; }
     .tree-relation-arrow { color: var(--pink); }
     .tree-relation-type { color: var(--purple); font-style: italic; }
     .tree-relation-target { color: var(--cyan); }
 
-    .tree-section-label {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 8px 0 4px;
+    .tree-inline-input {
+      background: var(--bg); color: var(--text); border: 1px solid var(--accent);
+      border-radius: 3px; padding: 2px 6px; font-family: inherit; font-size: 12px; width: 100%;
     }
+    .tree-inline-input:focus { outline: none; border-color: var(--cyan); }
+    .tree-add-obs {
+      font-size: 11px; color: var(--text-muted); background: none; border: none;
+      cursor: pointer; padding: 4px 0; margin-top: 2px;
+    }
+    .tree-add-obs:hover { color: var(--accent); }
 
     /* Graph View */
-    .graph-container {
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
+    .graph-container { width: 100%; height: 100%; position: relative; }
+    .graph-container svg { width: 100%; height: 100%; }
+    .graph-link { stroke: var(--border); stroke-width: 1.5; }
+    .graph-link.highlight { stroke: var(--accent); stroke-width: 2.5; }
+    .graph-link-label { font-size: 10px; fill: var(--text-muted); text-anchor: middle; pointer-events: none; }
+    .graph-node circle { stroke-width: 2; cursor: pointer; transition: all 0.15s; }
+    .graph-node.selected circle { stroke-width: 3; r: 22; filter: drop-shadow(0 0 8px var(--accent)); }
+    .graph-node.dimmed circle { opacity: 0.25; }
+    .graph-node.dimmed text { opacity: 0.25; }
+    .graph-link.dimmed { opacity: 0.1; }
+    .graph-node text { font-size: 11px; font-family: inherit; fill: var(--text); text-anchor: middle; pointer-events: none; }
+    .graph-arrow { fill: var(--border); }
 
-    .graph-container svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    .graph-link {
-      stroke: var(--border);
-      stroke-width: 1.5;
-    }
-
-    .graph-link-label {
-      font-size: 10px;
-      fill: var(--text-muted);
-      text-anchor: middle;
-      pointer-events: none;
-    }
-
-    .graph-node circle {
-      stroke-width: 2;
-      cursor: pointer;
-      transition: r 0.15s;
-    }
-
-    .graph-node:hover circle { r: 22; }
-
-    .graph-node text {
-      font-size: 11px;
-      font-family: inherit;
-      fill: var(--text);
-      text-anchor: middle;
-      pointer-events: none;
-    }
-
-    .graph-arrow {
-      fill: var(--border);
-    }
-
-    /* Tooltip */
     .tooltip {
-      position: fixed;
-      max-width: 380px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 16px;
-      font-size: 12px;
-      line-height: 1.6;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.15s;
-      z-index: 100;
+      position: fixed; max-width: 380px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 16px; font-size: 12px; line-height: 1.6;
+      pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 100;
       box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
-
     .tooltip.visible { opacity: 1; }
     .tooltip-title { font-weight: 600; color: var(--accent); margin-bottom: 4px; }
     .tooltip-type { color: var(--orange); font-size: 11px; }
     .tooltip-obs { color: var(--text-muted); margin-top: 6px; }
 
-    /* Empty state */
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      gap: 16px;
-      color: var(--text-muted);
-    }
-
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px; color: var(--text-muted); }
     .empty-state svg { opacity: 0.3; }
     .empty-state p { font-size: 14px; }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -357,7 +210,7 @@
       <div class="header-actions">
         <span class="file-path" id="filePath">No file loaded</span>
         <button class="btn" onclick="document.getElementById('fileInput').click()">Open JSONL</button>
-        <button class="btn btn-primary" onclick="loadFromPath()">Load from path</button>
+        <button class="btn btn-save" id="saveBtn" disabled onclick="saveFile()">Save</button>
         <input type="file" id="fileInput" accept=".jsonl,.json" hidden>
       </div>
     </header>
@@ -388,7 +241,32 @@
 
   <script>
     let graphData = { entities: [], relations: [] };
+    let rawLines = [];
     let simulation = null;
+    let selectedEntity = null;
+    let dirty = false;
+    let activeLeftView = 'jsonl';
+    let loadedFileHandle = null;
+
+    function markDirty() {
+      dirty = true;
+      document.getElementById('saveBtn').disabled = false;
+    }
+
+    // Rebuild rawLines from graphData
+    function rebuildRawLines() {
+      rawLines = [
+        ...graphData.entities.map(e => JSON.stringify(e)),
+        ...graphData.relations.map(r => JSON.stringify(r)),
+      ];
+    }
+
+    function updateStats() {
+      document.getElementById('stats').innerHTML =
+        `<span><strong>${graphData.entities.length}</strong> entities</span>` +
+        `<span><strong>${graphData.relations.length}</strong> relations</span>` +
+        `<span><strong>${graphData.entities.reduce((s, e) => s + (e.observations || []).length, 0)}</strong> observations</span>`;
+    }
 
     // Tab switching
     document.querySelectorAll('.panel-tab').forEach(tab => {
@@ -398,8 +276,10 @@
         document.querySelectorAll(`.panel-tab[data-panel="${panel}"]`).forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         if (panel === 'left') {
+          activeLeftView = view;
           document.getElementById('jsonl-view').style.display = view === 'jsonl' ? 'block' : 'none';
           document.getElementById('tree-view').style.display = view === 'tree' ? 'block' : 'none';
+          syncSelection(selectedEntity);
         }
       });
     });
@@ -408,57 +288,162 @@
     document.getElementById('fileInput').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
+      loadedFileHandle = file;
       const text = await file.text();
       document.getElementById('filePath').textContent = file.name;
       parseAndRender(text);
     });
 
-    // Load from path prompt
-    function loadFromPath() {
-      const path = prompt(
-        'Enter the absolute path to your memory.jsonl file:\n\n' +
-        'Example: /Users/you/workspace/project/.memory.jsonl\n\n' +
-        'Note: Due to browser security, this will use the File picker instead.'
-      );
-      if (path) {
-        document.getElementById('fileInput').click();
-      }
+    // Save: download updated file
+    function saveFile() {
+      if (!dirty) return;
+      rebuildRawLines();
+      const content = rawLines.join('\n') + '\n';
+      const blob = new Blob([content], { type: 'application/jsonl' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = loadedFileHandle ? loadedFileHandle.name : 'memory.jsonl';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      dirty = false;
+      document.getElementById('saveBtn').disabled = true;
     }
 
-    // Parse JSONL
+    // Parse
     function parseAndRender(text) {
-      const lines = text.trim().split('\n').filter(Boolean);
+      rawLines = text.trim().split('\n').filter(Boolean);
       graphData = { entities: [], relations: [] };
-
-      lines.forEach(line => {
+      rawLines.forEach(line => {
         try {
           const obj = JSON.parse(line);
-          if (obj.type === 'entity') {
-            graphData.entities.push(obj);
-          } else if (obj.type === 'relation') {
-            graphData.relations.push(obj);
-          }
+          if (obj.type === 'entity') graphData.entities.push(obj);
+          else if (obj.type === 'relation') graphData.relations.push(obj);
         } catch {}
       });
-
-      document.getElementById('stats').innerHTML =
-        `<span><strong>${graphData.entities.length}</strong> entities</span>` +
-        `<span><strong>${graphData.relations.length}</strong> relations</span>` +
-        `<span><strong>${graphData.entities.reduce((s, e) => s + e.observations.length, 0)}</strong> observations</span>`;
-
-      renderJsonl(lines);
+      dirty = false;
+      document.getElementById('saveBtn').disabled = true;
+      updateStats();
+      renderJsonl();
       renderTree();
       renderGraph();
     }
 
-    // Syntax-highlighted JSONL
-    function renderJsonl(lines) {
+    // --- Selection Sync ---
+    function selectEntity(name) {
+      selectedEntity = selectedEntity === name ? null : name;
+      syncSelection(selectedEntity);
+    }
+
+    function syncSelection(name) {
+      // JSONL
+      document.querySelectorAll('.jsonl-line').forEach(el => {
+        el.classList.toggle('selected', name && el.dataset.entity === name);
+      });
+      // Tree
+      document.querySelectorAll('.tree-header').forEach(el => {
+        el.classList.toggle('selected', name && el.dataset.entity === name);
+      });
+      // Expand selected tree node
+      if (name) {
+        const treeId = 'tree-' + name.replace(/\s+/g, '-');
+        const el = document.getElementById(treeId);
+        if (el && el.classList.contains('collapsed')) {
+          el.classList.remove('collapsed');
+          const toggle = document.getElementById(treeId + '-toggle');
+          if (toggle) toggle.innerHTML = '&#9660;';
+        }
+      }
+      // Graph
+      syncGraphSelection(name);
+      // Scroll into view
+      if (name && activeLeftView === 'jsonl') {
+        const el = document.querySelector(`.jsonl-line.selected`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else if (name && activeLeftView === 'tree') {
+        const el = document.querySelector(`.tree-header.selected`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    // --- JSONL View ---
+    function renderJsonl() {
+      rebuildRawLines();
       const container = document.getElementById('jsonl-view');
-      container.innerHTML = lines.map((line, i) => {
+      container.innerHTML = rawLines.map((line, i) => {
+        let entityName = '';
+        try {
+          const obj = JSON.parse(line);
+          entityName = obj.name || obj.from || '';
+        } catch {}
         const highlighted = highlightJson(line);
-        return `<div class="jsonl-line" data-line="${i}">${highlighted}</div>`;
+        return `<div class="jsonl-line" data-line="${i}" data-entity="${esc(entityName)}" onclick="handleJsonlClick(this, ${i})">${highlighted}</div>`;
       }).join('');
     }
+
+    let editingJsonlLine = -1;
+
+    function handleJsonlClick(el, lineIdx) {
+      const entityName = el.dataset.entity;
+      if (entityName) selectEntity(entityName);
+    }
+
+    function startJsonlEdit(lineIdx) {
+      editingJsonlLine = lineIdx;
+      const container = document.getElementById('jsonl-view');
+      const lineEl = container.querySelector(`[data-line="${lineIdx}"]`);
+      if (!lineEl) return;
+      const raw = rawLines[lineIdx];
+      let pretty;
+      try { pretty = JSON.stringify(JSON.parse(raw), null, 2); } catch { pretty = raw; }
+      lineEl.innerHTML = `
+        <textarea class="jsonl-editor" id="jsonl-edit-area">${esc(pretty)}</textarea>
+        <div class="jsonl-error" id="jsonl-edit-error"></div>
+        <div class="jsonl-edit-actions">
+          <button class="btn btn-primary" onclick="applyJsonlEdit(${lineIdx})">Apply</button>
+          <button class="btn" onclick="cancelJsonlEdit()">Cancel</button>
+        </div>
+      `;
+      const textarea = document.getElementById('jsonl-edit-area');
+      textarea.style.height = textarea.scrollHeight + 'px';
+      textarea.focus();
+    }
+
+    function applyJsonlEdit(lineIdx) {
+      const textarea = document.getElementById('jsonl-edit-area');
+      const errorEl = document.getElementById('jsonl-edit-error');
+      try {
+        const obj = JSON.parse(textarea.value);
+        rawLines[lineIdx] = JSON.stringify(obj);
+        // Rebuild graphData from rawLines
+        graphData = { entities: [], relations: [] };
+        rawLines.forEach(line => {
+          try {
+            const o = JSON.parse(line);
+            if (o.type === 'entity') graphData.entities.push(o);
+            else if (o.type === 'relation') graphData.relations.push(o);
+          } catch {}
+        });
+        markDirty();
+        updateStats();
+        renderJsonl();
+        renderTree();
+        renderGraph();
+        editingJsonlLine = -1;
+      } catch (e) {
+        errorEl.textContent = 'Invalid JSON: ' + e.message;
+      }
+    }
+
+    function cancelJsonlEdit() {
+      editingJsonlLine = -1;
+      renderJsonl();
+    }
+
+    // Add double-click to edit JSONL lines
+    document.getElementById('jsonl-view').addEventListener('dblclick', (e) => {
+      const line = e.target.closest('.jsonl-line');
+      if (line) startJsonlEdit(Number(line.dataset.line));
+    });
 
     function highlightJson(str) {
       return str
@@ -475,7 +460,7 @@
         .replace(/([{}\[\]])/g, '<span class="json-bracket">$1</span>');
     }
 
-    // Tree View
+    // --- Tree View ---
     function renderTree() {
       const container = document.getElementById('tree-view');
       const relsByEntity = {};
@@ -485,22 +470,32 @@
       });
 
       let html = '';
-      graphData.entities.forEach(entity => {
+      graphData.entities.forEach((entity, entityIdx) => {
         const rels = relsByEntity[entity.name] || [];
         const id = `tree-${entity.name.replace(/\s+/g, '-')}`;
+        const isSelected = selectedEntity === entity.name;
         html += `
-          <div class="tree-node">
-            <div class="tree-header" onclick="toggleTree('${id}')">
-              <span class="tree-toggle" id="${id}-toggle">&#9660;</span>
+          <div class="tree-node" data-entity-idx="${entityIdx}">
+            <div class="tree-header ${isSelected ? 'selected' : ''}" data-entity="${esc(entity.name)}" onclick="handleTreeHeaderClick(this, '${esc(entity.name)}')" ondblclick="startTreeNameEdit(${entityIdx})">
+              <span class="tree-toggle" id="${id}-toggle" onclick="event.stopPropagation(); toggleTree('${id}')">&#9660;</span>
               <span class="tree-icon">${getEntityIcon(entity.entityType)}</span>
-              <span class="tree-name">${esc(entity.name)}</span>
+              <span class="tree-name" id="${id}-name">${esc(entity.name)}</span>
               <span class="tree-type">${esc(entity.entityType)}</span>
+              <button class="tree-edit-btn" onclick="event.stopPropagation(); startTreeNameEdit(${entityIdx})" title="Edit">&#9998;</button>
             </div>
             <div class="tree-children" id="${id}">
-              ${entity.observations.length > 0 ? `
+              ${entity.observations && entity.observations.length > 0 ? `
                 <div class="tree-section-label">Observations (${entity.observations.length})</div>
-                ${entity.observations.map(o => `<div class="tree-observation">${esc(o)}</div>`).join('')}
-              ` : ''}
+                ${entity.observations.map((o, oi) => `
+                  <div class="tree-observation">
+                    <span class="bullet">&#8226;</span>
+                    <span class="obs-text" id="obs-${entityIdx}-${oi}">${esc(o)}</span>
+                    <button class="tree-obs-edit" onclick="startObsEdit(${entityIdx}, ${oi})" title="Edit">&#9998;</button>
+                    <button class="tree-obs-delete" onclick="deleteObs(${entityIdx}, ${oi})" title="Delete">&#10005;</button>
+                  </div>
+                `).join('')}
+              ` : '<div class="tree-section-label">Observations (0)</div>'}
+              <button class="tree-add-obs" onclick="addObs(${entityIdx})">+ Add observation</button>
               ${rels.length > 0 ? `
                 <div class="tree-section-label">Relations (${rels.length})</div>
                 ${rels.map(r => `
@@ -516,17 +511,84 @@
           </div>
         `;
       });
-
       container.innerHTML = html;
     }
 
+    function handleTreeHeaderClick(el, entityName) {
+      selectEntity(entityName);
+    }
+
+    function startTreeNameEdit(entityIdx) {
+      const entity = graphData.entities[entityIdx];
+      const id = `tree-${entity.name.replace(/\s+/g, '-')}`;
+      const nameEl = document.getElementById(id + '-name');
+      if (!nameEl) return;
+      const oldName = entity.name;
+      nameEl.innerHTML = `<input class="tree-inline-input" value="${esc(oldName)}" onkeydown="if(event.key==='Enter'){applyTreeNameEdit(${entityIdx}, this.value, '${esc(oldName)}')} if(event.key==='Escape'){renderTree();}" autofocus>`;
+      nameEl.querySelector('input').focus();
+      nameEl.querySelector('input').select();
+    }
+
+    function applyTreeNameEdit(entityIdx, newName, oldName) {
+      newName = newName.trim();
+      if (!newName || newName === oldName) { renderTree(); return; }
+      graphData.entities[entityIdx].name = newName;
+      // Update relations referencing old name
+      graphData.relations.forEach(r => {
+        if (r.from === oldName) r.from = newName;
+        if (r.to === oldName) r.to = newName;
+      });
+      markDirty();
+      updateStats();
+      rebuildRawLines();
+      renderJsonl();
+      renderTree();
+      renderGraph();
+      selectEntity(newName);
+    }
+
+    function startObsEdit(entityIdx, obsIdx) {
+      const el = document.getElementById(`obs-${entityIdx}-${obsIdx}`);
+      if (!el) return;
+      const old = graphData.entities[entityIdx].observations[obsIdx];
+      el.innerHTML = `<input class="tree-inline-input" value="${esc(old)}" onkeydown="if(event.key==='Enter'){applyObsEdit(${entityIdx}, ${obsIdx}, this.value)} if(event.key==='Escape'){renderTree();}" autofocus>`;
+      el.querySelector('input').focus();
+    }
+
+    function applyObsEdit(entityIdx, obsIdx, newVal) {
+      newVal = newVal.trim();
+      if (!newVal) { renderTree(); return; }
+      graphData.entities[entityIdx].observations[obsIdx] = newVal;
+      markDirty();
+      rebuildRawLines();
+      renderJsonl();
+      renderTree();
+    }
+
+    function deleteObs(entityIdx, obsIdx) {
+      graphData.entities[entityIdx].observations.splice(obsIdx, 1);
+      markDirty();
+      updateStats();
+      rebuildRawLines();
+      renderJsonl();
+      renderTree();
+    }
+
+    function addObs(entityIdx) {
+      const entity = graphData.entities[entityIdx];
+      if (!entity.observations) entity.observations = [];
+      entity.observations.push('New observation');
+      markDirty();
+      updateStats();
+      rebuildRawLines();
+      renderJsonl();
+      renderTree();
+      // Start editing the new observation immediately
+      startObsEdit(entityIdx, entity.observations.length - 1);
+    }
+
     function getEntityIcon(type) {
-      const icons = {
-        project: '&#128194;',
-        architecture: '&#127959;',
-        schema: '&#128202;',
-        convention: '&#128214;',
-      };
+      const icons = { project: '&#128194;', architecture: '&#127959;', schema: '&#128202;', convention: '&#128214;' };
       return icons[type] || '&#128300;';
     }
 
@@ -543,10 +605,15 @@
       return d.innerHTML;
     }
 
-    // Graph View (D3 force-directed)
+    // --- Graph View ---
+    let graphNodeElements = null;
+    let graphLinkElements = null;
+
     function renderGraph() {
       const container = document.getElementById('graph-view');
       container.innerHTML = '';
+      graphNodeElements = null;
+      graphLinkElements = null;
 
       if (graphData.entities.length === 0) {
         container.innerHTML = `
@@ -562,161 +629,134 @@
       const width = container.clientWidth;
       const height = container.clientHeight;
 
-      const typeColors = {
-        project: '#6c7bf7',
-        architecture: '#f59e0b',
-        schema: '#34d399',
-        convention: '#f472b6',
-      };
+      const typeColors = { project: '#6c7bf7', architecture: '#f59e0b', schema: '#34d399', convention: '#f472b6' };
 
       const nodes = graphData.entities.map(e => ({
-        id: e.name,
-        type: e.entityType,
-        observations: e.observations,
+        id: e.name, type: e.entityType, observations: e.observations || [],
         color: typeColors[e.entityType] || '#8b90a0',
       }));
 
       const nodeSet = new Set(nodes.map(n => n.id));
       const links = graphData.relations
         .filter(r => nodeSet.has(r.from) && nodeSet.has(r.to))
-        .map(r => ({
-          source: r.from,
-          target: r.to,
-          label: r.relationType,
-        }));
+        .map(r => ({ source: r.from, target: r.to, label: r.relationType }));
 
-      const svg = d3.select(container).append('svg')
-        .attr('width', width)
-        .attr('height', height);
+      const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
 
-      // Arrow marker
       svg.append('defs').append('marker')
-        .attr('id', 'arrowhead')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 28)
-        .attr('refY', 0)
-        .attr('markerWidth', 6)
-        .attr('markerHeight', 6)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M0,-5L10,0L0,5')
-        .attr('class', 'graph-arrow');
+        .attr('id', 'arrowhead').attr('viewBox', '0 -5 10 10')
+        .attr('refX', 28).attr('refY', 0).attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
+        .append('path').attr('d', 'M0,-5L10,0L0,5').attr('class', 'graph-arrow');
 
       const g = svg.append('g');
+      svg.call(d3.zoom().scaleExtent([0.3, 4]).on('zoom', (event) => g.attr('transform', event.transform)));
 
-      // Zoom
-      svg.call(d3.zoom()
-        .scaleExtent([0.3, 4])
-        .on('zoom', (event) => g.attr('transform', event.transform))
-      );
+      // Click on background to deselect
+      svg.on('click', (event) => {
+        if (event.target === svg.node()) { selectedEntity = null; syncSelection(null); }
+      });
 
-      // Links
-      const link = g.append('g').selectAll('line')
-        .data(links)
-        .join('line')
-        .attr('class', 'graph-link')
-        .attr('marker-end', 'url(#arrowhead)');
+      const link = g.append('g').selectAll('line').data(links).join('line')
+        .attr('class', 'graph-link').attr('marker-end', 'url(#arrowhead)');
 
-      // Link labels
-      const linkLabel = g.append('g').selectAll('text')
-        .data(links)
-        .join('text')
-        .attr('class', 'graph-link-label')
-        .text(d => d.label);
+      const linkLabel = g.append('g').selectAll('text').data(links).join('text')
+        .attr('class', 'graph-link-label').text(d => d.label);
 
-      // Nodes
-      const node = g.append('g').selectAll('g')
-        .data(nodes)
-        .join('g')
+      const node = g.append('g').selectAll('g').data(nodes).join('g')
         .attr('class', 'graph-node')
-        .call(d3.drag()
-          .on('start', dragstarted)
-          .on('drag', dragged)
-          .on('end', dragended)
-        );
+        .call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended));
 
-      node.append('circle')
-        .attr('r', 18)
-        .attr('fill', d => d.color + '22')
-        .attr('stroke', d => d.color);
+      node.append('circle').attr('r', 18).attr('fill', d => d.color + '22').attr('stroke', d => d.color);
+      node.append('text').attr('dy', 32).text(d => d.id.length > 20 ? d.id.slice(0, 18) + '...' : d.id);
 
-      node.append('text')
-        .attr('dy', 32)
-        .text(d => d.id.length > 20 ? d.id.slice(0, 18) + '...' : d.id);
+      graphNodeElements = node;
+      graphLinkElements = link;
 
-      // Tooltip
+      // Tooltip on hover
       const tooltip = document.getElementById('tooltip');
       node.on('mouseenter', (event, d) => {
         const obsHtml = d.observations.slice(0, 4)
           .map(o => `<div>&#8226; ${esc(o.length > 80 ? o.slice(0, 77) + '...' : o)}</div>`).join('');
-        const moreCount = d.observations.length > 4 ? `<div style="color:var(--accent)">+${d.observations.length - 4} more...</div>` : '';
-        tooltip.innerHTML = `
-          <div class="tooltip-title">${esc(d.id)}</div>
-          <div class="tooltip-type">${esc(d.type)}</div>
-          <div class="tooltip-obs">${obsHtml}${moreCount}</div>
-        `;
+        const more = d.observations.length > 4 ? `<div style="color:var(--accent)">+${d.observations.length - 4} more...</div>` : '';
+        tooltip.innerHTML = `<div class="tooltip-title">${esc(d.id)}</div><div class="tooltip-type">${esc(d.type)}</div><div class="tooltip-obs">${obsHtml}${more}</div>`;
         tooltip.classList.add('visible');
       })
       .on('mousemove', (event) => {
         tooltip.style.left = (event.clientX + 16) + 'px';
         tooltip.style.top = (event.clientY - 8) + 'px';
       })
-      .on('mouseleave', () => {
-        tooltip.classList.remove('visible');
+      .on('mouseleave', () => tooltip.classList.remove('visible'));
+
+      // Click to select
+      node.on('click', (event, d) => {
+        event.stopPropagation();
+        selectEntity(d.id);
       });
 
-      // Simulation
       simulation = d3.forceSimulation(nodes)
         .force('link', d3.forceLink(links).id(d => d.id).distance(160))
         .force('charge', d3.forceManyBody().strength(-400))
         .force('center', d3.forceCenter(width / 2, height / 2))
         .force('collision', d3.forceCollide().radius(40))
         .on('tick', () => {
-          link
-            .attr('x1', d => d.source.x)
-            .attr('y1', d => d.source.y)
-            .attr('x2', d => d.target.x)
-            .attr('y2', d => d.target.y);
-          linkLabel
-            .attr('x', d => (d.source.x + d.target.x) / 2)
-            .attr('y', d => (d.source.y + d.target.y) / 2 - 6);
+          link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+              .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+          linkLabel.attr('x', d => (d.source.x + d.target.x) / 2)
+                   .attr('y', d => (d.source.y + d.target.y) / 2 - 6);
           node.attr('transform', d => `translate(${d.x},${d.y})`);
         });
 
-      function dragstarted(event, d) {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-      }
+      function dragstarted(event, d) { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
+      function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
+      function dragended(event, d) { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
 
-      function dragged(event, d) {
-        d.fx = event.x;
-        d.fy = event.y;
-      }
-
-      function dragended(event, d) {
-        if (!event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-      }
+      // Apply current selection to graph
+      if (selectedEntity) syncGraphSelection(selectedEntity);
     }
 
-    // Handle window resize
-    window.addEventListener('resize', () => {
-      if (graphData.entities.length > 0) renderGraph();
-    });
+    function syncGraphSelection(name) {
+      if (!graphNodeElements || !graphLinkElements) return;
 
-    // Auto-load if query param ?file= provided (for local dev servers)
+      if (!name) {
+        graphNodeElements.classed('selected', false).classed('dimmed', false);
+        graphLinkElements.classed('highlight', false).classed('dimmed', false);
+        return;
+      }
+
+      // Collect connected node names
+      const connected = new Set([name]);
+      graphData.relations.forEach(r => {
+        if (r.from === name) connected.add(r.to);
+        if (r.to === name) connected.add(r.from);
+      });
+
+      graphNodeElements
+        .classed('selected', d => d.id === name)
+        .classed('dimmed', d => !connected.has(d.id));
+
+      graphLinkElements
+        .classed('highlight', d => {
+          const src = typeof d.source === 'object' ? d.source.id : d.source;
+          const tgt = typeof d.target === 'object' ? d.target.id : d.target;
+          return src === name || tgt === name;
+        })
+        .classed('dimmed', d => {
+          const src = typeof d.source === 'object' ? d.source.id : d.source;
+          const tgt = typeof d.target === 'object' ? d.target.id : d.target;
+          return src !== name && tgt !== name;
+        });
+    }
+
+    window.addEventListener('resize', () => { if (graphData.entities.length > 0) renderGraph(); });
+
+    // Auto-load
     const urlParams = new URLSearchParams(window.location.search);
     const autoFile = urlParams.get('file');
     if (autoFile) {
-      fetch(autoFile)
-        .then(r => r.text())
-        .then(text => {
-          document.getElementById('filePath').textContent = autoFile;
-          parseAndRender(text);
-        })
-        .catch(() => console.error('Failed to auto-load:', autoFile));
+      fetch(autoFile).then(r => r.text()).then(text => {
+        document.getElementById('filePath').textContent = autoFile;
+        parseAndRender(text);
+      }).catch(() => console.error('Failed to auto-load:', autoFile));
     }
   </script>
 </body>
