@@ -1,0 +1,9 @@
+{
+  "name": "memory-visualizer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Visualizer for MCP Memory Knowledge Graph (.jsonl files)",
+  "scripts": {
+    "start": "npx -y serve ."
+  }
+}

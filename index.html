@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Graph Visualizer</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #232736;
+      --border: #2e3348;
+      --text: #e1e4ed;
+      --text-muted: #8b90a0;
+      --accent: #6c7bf7;
+      --accent-dim: #4a56c9;
+      --orange: #f59e0b;
+      --green: #34d399;
+      --red: #f87171;
+      --cyan: #22d3ee;
+      --pink: #f472b6;
+      --purple: #a78bfa;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Layout */
+    .app {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: -0.3px;
+    }
+
+    header h1 span { color: var(--text-muted); font-weight: 400; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .file-path {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--surface2);
+      padding: 4px 10px;
+      border-radius: 4px;
+      max-width: 400px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn:hover { background: var(--border); }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-dim); }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .stats strong { color: var(--text); }
+
+    /* Main content */
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+    }
+
+    .panel:last-child { border-right: none; }
+
+    .panel-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .panel-tab {
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: inherit;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .panel-tab:hover { color: var(--text); }
+    .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .panel-body {
+      flex: 1;
+      overflow: auto;
+      padding: 0;
+    }
+
+    /* JSONL View */
+    .jsonl-view {
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .jsonl-line {
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-bottom: 2px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .jsonl-line:hover { background: var(--surface2); }
+    .jsonl-line.selected { background: var(--surface2); outline: 1px solid var(--accent); }
+
+    .json-key { color: var(--cyan); }
+    .json-string { color: var(--green); }
+    .json-type { color: var(--orange); }
+    .json-bracket { color: var(--text-muted); }
+    .json-relation { color: var(--pink); }
+
+    /* Tree View */
+    .tree-view {
+      padding: 16px;
+      font-size: 13px;
+    }
+
+    .tree-node {
+      margin-bottom: 8px;
+    }
+
+    .tree-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .tree-header:hover { background: var(--surface2); }
+
+    .tree-toggle {
+      width: 16px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 10px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .tree-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .tree-name {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .tree-type {
+      font-size: 11px;
+      color: var(--orange);
+      background: rgba(245, 158, 11, 0.12);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    .tree-children {
+      margin-left: 24px;
+      border-left: 1px solid var(--border);
+      padding-left: 12px;
+      overflow: hidden;
+      transition: max-height 0.2s;
+    }
+
+    .tree-children.collapsed { max-height: 0; padding: 0; overflow: hidden; }
+
+    .tree-observation {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 3px 0;
+      line-height: 1.5;
+    }
+
+    .tree-observation::before {
+      content: "•";
+      color: var(--border);
+      margin-right: 8px;
+    }
+
+    .tree-relation {
+      font-size: 12px;
+      padding: 3px 0;
+    }
+
+    .tree-relation-arrow { color: var(--pink); }
+    .tree-relation-type { color: var(--purple); font-style: italic; }
+    .tree-relation-target { color: var(--cyan); }
+
+    .tree-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 0 4px;
+    }
+
+    /* Graph View */
+    .graph-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .graph-container svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .graph-link {
+      stroke: var(--border);
+      stroke-width: 1.5;
+    }
+
+    .graph-link-label {
+      font-size: 10px;
+      fill: var(--text-muted);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    .graph-node circle {
+      stroke-width: 2;
+      cursor: pointer;
+      transition: r 0.15s;
+    }
+
+    .graph-node:hover circle { r: 22; }
+
+    .graph-node text {
+      font-size: 11px;
+      font-family: inherit;
+      fill: var(--text);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    .graph-arrow {
+      fill: var(--border);
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: fixed;
+      max-width: 380px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 12px;
+      line-height: 1.6;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 100;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .tooltip.visible { opacity: 1; }
+    .tooltip-title { font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+    .tooltip-type { color: var(--orange); font-size: 11px; }
+    .tooltip-obs { color: var(--text-muted); margin-top: 6px; }
+
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 16px;
+      color: var(--text-muted);
+    }
+
+    .empty-state svg { opacity: 0.3; }
+    .empty-state p { font-size: 14px; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <h1>Memory Graph <span>Visualizer</span></h1>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="header-actions">
+        <span class="file-path" id="filePath">No file loaded</span>
+        <button class="btn" onclick="document.getElementById('fileInput').click()">Open JSONL</button>
+        <button class="btn btn-primary" onclick="loadFromPath()">Load from path</button>
+        <input type="file" id="fileInput" accept=".jsonl,.json" hidden>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="panel">
+        <div class="panel-tabs">
+          <button class="panel-tab active" data-panel="left" data-view="jsonl">JSONL</button>
+          <button class="panel-tab" data-panel="left" data-view="tree">Tree</button>
+        </div>
+        <div class="panel-body">
+          <div id="jsonl-view" class="jsonl-view"></div>
+          <div id="tree-view" class="tree-view" style="display:none;"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-tabs">
+          <button class="panel-tab active" data-panel="right" data-view="graph">Graph</button>
+        </div>
+        <div class="panel-body">
+          <div id="graph-view" class="graph-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    let graphData = { entities: [], relations: [] };
+    let simulation = null;
+
+    // Tab switching
+    document.querySelectorAll('.panel-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const panel = tab.dataset.panel;
+        const view = tab.dataset.view;
+        document.querySelectorAll(`.panel-tab[data-panel="${panel}"]`).forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        if (panel === 'left') {
+          document.getElementById('jsonl-view').style.display = view === 'jsonl' ? 'block' : 'none';
+          document.getElementById('tree-view').style.display = view === 'tree' ? 'block' : 'none';
+        }
+      });
+    });
+
+    // File input
+    document.getElementById('fileInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const text = await file.text();
+      document.getElementById('filePath').textContent = file.name;
+      parseAndRender(text);
+    });
+
+    // Load from path prompt
+    function loadFromPath() {
+      const path = prompt(
+        'Enter the absolute path to your memory.jsonl file:\n\n' +
+        'Example: /Users/you/workspace/project/.memory.jsonl\n\n' +
+        'Note: Due to browser security, this will use the File picker instead.'
+      );
+      if (path) {
+        document.getElementById('fileInput').click();
+      }
+    }
+
+    // Parse JSONL
+    function parseAndRender(text) {
+      const lines = text.trim().split('\n').filter(Boolean);
+      graphData = { entities: [], relations: [] };
+
+      lines.forEach(line => {
+        try {
+          const obj = JSON.parse(line);
+          if (obj.type === 'entity') {
+            graphData.entities.push(obj);
+          } else if (obj.type === 'relation') {
+            graphData.relations.push(obj);
+          }
+        } catch {}
+      });
+
+      document.getElementById('stats').innerHTML =
+        `<span><strong>${graphData.entities.length}</strong> entities</span>` +
+        `<span><strong>${graphData.relations.length}</strong> relations</span>` +
+        `<span><strong>${graphData.entities.reduce((s, e) => s + e.observations.length, 0)}</strong> observations</span>`;
+
+      renderJsonl(lines);
+      renderTree();
+      renderGraph();
+    }
+
+    // Syntax-highlighted JSONL
+    function renderJsonl(lines) {
+      const container = document.getElementById('jsonl-view');
+      container.innerHTML = lines.map((line, i) => {
+        const highlighted = highlightJson(line);
+        return `<div class="jsonl-line" data-line="${i}">${highlighted}</div>`;
+      }).join('');
+    }
+
+    function highlightJson(str) {
+      return str
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"(type)":/g, '"<span class="json-key">$1</span>":')
+        .replace(/"(name|entityType|from|to|relationType|observations)":/g, '"<span class="json-key">$1</span>":')
+        .replace(/:\s*"(entity|relation)"/g, ': "<span class="json-type">$1</span>"')
+        .replace(/:\s*"(project|architecture|schema|convention)"/g, ': "<span class="json-type">$1</span>"')
+        .replace(/"(has|contains|follows|references[^"]*)"/, '"<span class="json-relation">$1</span>"')
+        .replace(/("(?:(?!":).)*?")/g, (match) => {
+          if (match.includes('class="')) return match;
+          return `<span class="json-string">${match}</span>`;
+        })
+        .replace(/([{}\[\]])/g, '<span class="json-bracket">$1</span>');
+    }
+
+    // Tree View
+    function renderTree() {
+      const container = document.getElementById('tree-view');
+      const relsByEntity = {};
+      graphData.relations.forEach(r => {
+        if (!relsByEntity[r.from]) relsByEntity[r.from] = [];
+        relsByEntity[r.from].push(r);
+      });
+
+      let html = '';
+      graphData.entities.forEach(entity => {
+        const rels = relsByEntity[entity.name] || [];
+        const id = `tree-${entity.name.replace(/\s+/g, '-')}`;
+        html += `
+          <div class="tree-node">
+            <div class="tree-header" onclick="toggleTree('${id}')">
+              <span class="tree-toggle" id="${id}-toggle">&#9660;</span>
+              <span class="tree-icon">${getEntityIcon(entity.entityType)}</span>
+              <span class="tree-name">${esc(entity.name)}</span>
+              <span class="tree-type">${esc(entity.entityType)}</span>
+            </div>
+            <div class="tree-children" id="${id}">
+              ${entity.observations.length > 0 ? `
+                <div class="tree-section-label">Observations (${entity.observations.length})</div>
+                ${entity.observations.map(o => `<div class="tree-observation">${esc(o)}</div>`).join('')}
+              ` : ''}
+              ${rels.length > 0 ? `
+                <div class="tree-section-label">Relations (${rels.length})</div>
+                ${rels.map(r => `
+                  <div class="tree-relation">
+                    <span class="tree-relation-arrow">&#8594;</span>
+                    <span class="tree-relation-type">${esc(r.relationType)}</span>
+                    <span class="tree-relation-arrow">&#8594;</span>
+                    <span class="tree-relation-target">${esc(r.to)}</span>
+                  </div>
+                `).join('')}
+              ` : ''}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function getEntityIcon(type) {
+      const icons = {
+        project: '&#128194;',
+        architecture: '&#127959;',
+        schema: '&#128202;',
+        convention: '&#128214;',
+      };
+      return icons[type] || '&#128300;';
+    }
+
+    function toggleTree(id) {
+      const el = document.getElementById(id);
+      const toggle = document.getElementById(id + '-toggle');
+      el.classList.toggle('collapsed');
+      toggle.innerHTML = el.classList.contains('collapsed') ? '&#9654;' : '&#9660;';
+    }
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    // Graph View (D3 force-directed)
+    function renderGraph() {
+      const container = document.getElementById('graph-view');
+      container.innerHTML = '';
+
+      if (graphData.entities.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/>
+            </svg>
+            <p>Load a .jsonl file to visualize the knowledge graph</p>
+          </div>`;
+        return;
+      }
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      const typeColors = {
+        project: '#6c7bf7',
+        architecture: '#f59e0b',
+        schema: '#34d399',
+        convention: '#f472b6',
+      };
+
+      const nodes = graphData.entities.map(e => ({
+        id: e.name,
+        type: e.entityType,
+        observations: e.observations,
+        color: typeColors[e.entityType] || '#8b90a0',
+      }));
+
+      const nodeSet = new Set(nodes.map(n => n.id));
+      const links = graphData.relations
+        .filter(r => nodeSet.has(r.from) && nodeSet.has(r.to))
+        .map(r => ({
+          source: r.from,
+          target: r.to,
+          label: r.relationType,
+        }));
+
+      const svg = d3.select(container).append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+      // Arrow marker
+      svg.append('defs').append('marker')
+        .attr('id', 'arrowhead')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 28)
+        .attr('refY', 0)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('class', 'graph-arrow');
+
+      const g = svg.append('g');
+
+      // Zoom
+      svg.call(d3.zoom()
+        .scaleExtent([0.3, 4])
+        .on('zoom', (event) => g.attr('transform', event.transform))
+      );
+
+      // Links
+      const link = g.append('g').selectAll('line')
+        .data(links)
+        .join('line')
+        .attr('class', 'graph-link')
+        .attr('marker-end', 'url(#arrowhead)');
+
+      // Link labels
+      const linkLabel = g.append('g').selectAll('text')
+        .data(links)
+        .join('text')
+        .attr('class', 'graph-link-label')
+        .text(d => d.label);
+
+      // Nodes
+      const node = g.append('g').selectAll('g')
+        .data(nodes)
+        .join('g')
+        .attr('class', 'graph-node')
+        .call(d3.drag()
+          .on('start', dragstarted)
+          .on('drag', dragged)
+          .on('end', dragended)
+        );
+
+      node.append('circle')
+        .attr('r', 18)
+        .attr('fill', d => d.color + '22')
+        .attr('stroke', d => d.color);
+
+      node.append('text')
+        .attr('dy', 32)
+        .text(d => d.id.length > 20 ? d.id.slice(0, 18) + '...' : d.id);
+
+      // Tooltip
+      const tooltip = document.getElementById('tooltip');
+      node.on('mouseenter', (event, d) => {
+        const obsHtml = d.observations.slice(0, 4)
+          .map(o => `<div>&#8226; ${esc(o.length > 80 ? o.slice(0, 77) + '...' : o)}</div>`).join('');
+        const moreCount = d.observations.length > 4 ? `<div style="color:var(--accent)">+${d.observations.length - 4} more...</div>` : '';
+        tooltip.innerHTML = `
+          <div class="tooltip-title">${esc(d.id)}</div>
+          <div class="tooltip-type">${esc(d.type)}</div>
+          <div class="tooltip-obs">${obsHtml}${moreCount}</div>
+        `;
+        tooltip.classList.add('visible');
+      })
+      .on('mousemove', (event) => {
+        tooltip.style.left = (event.clientX + 16) + 'px';
+        tooltip.style.top = (event.clientY - 8) + 'px';
+      })
+      .on('mouseleave', () => {
+        tooltip.classList.remove('visible');
+      });
+
+      // Simulation
+      simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(160))
+        .force('charge', d3.forceManyBody().strength(-400))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(40))
+        .on('tick', () => {
+          link
+            .attr('x1', d => d.source.x)
+            .attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x)
+            .attr('y2', d => d.target.y);
+          linkLabel
+            .attr('x', d => (d.source.x + d.target.x) / 2)
+            .attr('y', d => (d.source.y + d.target.y) / 2 - 6);
+          node.attr('transform', d => `translate(${d.x},${d.y})`);
+        });
+
+      function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+
+      function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+      }
+
+      function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (graphData.entities.length > 0) renderGraph();
+    });
+
+    // Auto-load if query param ?file= provided (for local dev servers)
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoFile = urlParams.get('file');
+    if (autoFile) {
+      fetch(autoFile)
+        .then(r => r.text())
+        .then(text => {
+          document.getElementById('filePath').textContent = autoFile;
+          parseAndRender(text);
+        })
+        .catch(() => console.error('Failed to auto-load:', autoFile));
+    }
+  </script>
+</body>
+</html>
